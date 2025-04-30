@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <title>Главная</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        body {
+            background: #1a1a1a;
+            color: white;
+        }
+
+        header.header {
+            background: linear-gradient(to right, #c21010, #e63946);
+            text-align: center;
+            padding: 2rem;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .center-image {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 2rem auto;
+            max-width: 80%;
+        }
+
+        .center-image img {
+            width: 100%;
+            max-width: 600px;
+            height: auto;
+            border-radius: 15px;
+            box-shadow: 0 0 10px #000;
+        }
+
+        .buttons {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        @media (min-width: 768px) {
+            .buttons {
+                flex-direction: row;
+                justify-content: space-around;
+            }
+        }
+
+        .btn {
+            background: #222;
+            color: #ff3b3b;
+            padding: 1rem 2rem;
+            border-radius: 20px;
+            text-decoration: none;
+            font-size: 1.2rem;
+            font-weight: bold;
+            font-family: 'Playfair Display', serif;
+            border: 2px solid #ff3b3b;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            background: #ff3b3b;
+            color: #222;
+        }
+
+        footer.back-btn a {
+            display: block;
+            text-align: center;
+            margin-top: 2rem;
+            background: #222;
+            color: #ff3b3b !important;
+            padding: 1rem;
+            border-radius: 20px;
+            border: 2px solid #ff3b3b;
+            text-decoration: none;
+            font-family: 'Playfair Display', serif;
+        }
+
+        footer.back-btn a:hover {
+            background: #ff3b3b;
+            color: #222 !important;
+        }
+    </style>
+</head>
+<body>
+
+<header class="header">
+    <h1>Великая Отечественная Война</h1>
+</header>
+
+<div class="center-image">
+    <img src="https://via.placeholder.com/600x300?text=Главное+Фото" alt="Главное фото">
+</div>
+
+<div class="buttons">
+    <a href="weapons.html" class="btn">Оружие</a>
+    <a href="heroes.html" class="btn">Герои</a>
+    <a href="history.html" class="btn">История</a>
+</div>
+
+<footer class="back-btn"></footer>
+
+</body>
+</html>
