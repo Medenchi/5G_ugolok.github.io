@@ -1,162 +1,194 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8" />
-    <title>Герои Советского Союза</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto&display=swap" rel="stylesheet">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Roboto', sans-serif;
-        }
+  <meta charset="UTF-8" />
+  <title>Герои Советского Союза</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Roboto', sans-serif;
+    }
 
-        body {
-            background-color: #1a1a1a;
-            color: white;
-        }
+    body {
+      background-color: #1a1a1a;
+      color: white;
+    }
 
-        header.header {
-            background: linear-gradient(to right, #c21010, #e63946);
-            text-align: center;
-            padding: 2rem;
-            font-family: 'Playfair Display', serif;
-        }
+    header.header {
+      background: linear-gradient(to right, #c21010, #e63946);
+      text-align: center;
+      padding: 2rem;
+      font-family: 'Playfair Display', serif;
+    }
 
-        .container {
-            max-width: 1200px;
-            margin: auto;
-            padding: 1rem;
-        }
+    .container {
+      max-width: 1200px;
+      margin: auto;
+      padding: 1rem;
+    }
 
-        .info-card {
-            background: #222222;
-            color: white;
-            border-radius: 15px;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            box-shadow: 0 0 10px #000;
-            border: 1px solid #444;
-        }
+    .info-card {
+      display: flex;
+      gap: 1rem;
+      background: #222222;
+      color: white;
+      border-radius: 15px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 0 10px #000;
+      border: 1px solid #444;
+      align-items: start;
+    }
 
-        h2.card-title {
-            color: #ff3b3b;
-            font-size: 1.5rem;
-            font-family: 'Playfair Display', serif;
-            margin-bottom: 0.5rem;
-        }
+    .card-img {
+      width: 120px;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 10px;
+    }
 
-        p.card-desc {
-            font-size: 1rem;
-        }
+    .card-content {
+      flex-grow: 1;
+    }
 
-        .admin-btn {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: #ff3b3b;
-            color: white;
-            border: none;
-            width: 50px;
-            height: 50px;
-            font-size: 1.5rem;
-            border-radius: 50%;
-            cursor: pointer;
-            z-index: 999;
-        }
+    h2.card-title {
+      color: #ff3b3b;
+      font-size: 1.5rem;
+      font-family: 'Playfair Display', serif;
+      margin-bottom: 0.5rem;
+    }
 
-        #loginForm {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.95);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-        }
+    p.card-desc {
+      font-size: 1rem;
+    }
 
-        .login-box {
-            background: #222;
-            padding: 2rem;
-            border-radius: 10px;
-            width: 90%;
-            max-width: 400px;
-            text-align: center;
-        }
+    .admin-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #ff3b3b;
+      color: white;
+      border: none;
+      width: 50px;
+      height: 50px;
+      font-size: 1.5rem;
+      border-radius: 50%;
+      cursor: pointer;
+      z-index: 999;
+    }
 
-        .login-box input {
-            width: 100%;
-            padding: 10px;
-            margin: 1rem 0;
-            border: none;
-            border-radius: 10px;
-        }
+    #loginForm {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.95);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
 
-        .login-box button {
-            width: 100%;
-            padding: 10px;
-            background-color: #ff3b3b;
-            border: none;
-            color: white;
-            border-radius: 10px;
-            cursor: pointer;
-        }
+    .login-box {
+      background: #222;
+      padding: 2rem;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 400px;
+      text-align: center;
+    }
 
-        #addPanel {
-            display: none;
-            background: #1c1c1c;
-            padding: 1.5rem;
-            border-radius: 10px;
-        }
+    .login-box input {
+      width: 100%;
+      padding: 10px;
+      margin: 1rem 0;
+      border: none;
+      border-radius: 10px;
+    }
 
-        #addPanel input,
-        #addPanel textarea,
-        #addPanel button {
-            width: 100%;
-            padding: 0.75rem;
-            margin: 1rem 0;
-            border: none;
-            border-radius: 10px;
-        }
+    .login-box button {
+      width: 100%;
+      padding: 10px;
+      background-color: #ff3b3b;
+      border: none;
+      color: white;
+      border-radius: 10px;
+      cursor: pointer;
+    }
 
-        #addPanel textarea {
-            resize: vertical;
-            min-height: 100px;
-        }
+    #addPanel, #editPanel {
+      display: none;
+      background: #1c1c1c;
+      padding: 1.5rem;
+      border-radius: 10px;
+      margin-top: 1rem;
+    }
 
-        #addPanel button {
-            background: #ff3b3b;
-            color: white;
-            cursor: pointer;
-        }
+    #addPanel input,
+    #addPanel textarea,
+    #addPanel button,
+    #editPanel input,
+    #editPanel textarea,
+    #editPanel button {
+      width: 100%;
+      padding: 0.75rem;
+      margin: 0.5rem 0;
+      border: none;
+      border-radius: 10px;
+    }
 
-        footer.back-btn a {
-            display: block;
-            text-align: center;
-            margin-top: 2rem;
-            background: #222;
-            color: #ff3b3b !important;
-            padding: 0.8rem 2rem;
-            border-radius: 20px;
-            text-decoration: none;
-            border: 2px solid #ff3b3b;
-        }
+    #addPanel textarea,
+    #editPanel textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
 
-        footer.back-btn a:hover {
-            background: #ff3b3b;
-            color: #222 !important;
-        }
-    </style>
+    #addPanel button,
+    #editPanel button {
+      background: #ff3b3b;
+      color: white;
+      cursor: pointer;
+    }
+
+    #imagePreview {
+      max-width: 100%;
+      max-height: 150px;
+      margin-top: 0.5rem;
+      border-radius: 10px;
+      display: none;
+    }
+
+    .actions {
+      margin-top: 1rem;
+    }
+
+    footer.back-btn a {
+      display: block;
+      text-align: center;
+      margin-top: 2rem;
+      background: #222;
+      color: #ff3b3b !important;
+      padding: 0.8rem 2rem;
+      border-radius: 20px;
+      text-decoration: none;
+      border: 2px solid #ff3b3b;
+    }
+
+    footer.back-btn a:hover {
+      background: #ff3b3b;
+      color: #222 !important;
+    }
+  </style>
 </head>
 <body>
 
 <header class="header">
-    <h1>Герои Советского Союза</h1>
+  <h1>Герои Советского Союза</h1>
 </header>
 
 <div class="container" id="heroesContainer"></div>
@@ -165,99 +197,192 @@
 
 <!-- Форма авторизации -->
 <div id="loginForm">
-    <div class="login-box">
-        <h2>🔐 Авторизация</h2>
-        <input type="text" id="username" placeholder="Логин">
-        <input type="password" id="password" placeholder="Пароль">
-        <button onclick="checkLogin()">Войти</button>
-    </div>
+  <div class="login-box">
+    <h2>🔐 Авторизация</h2>
+    <input type="text" id="username" placeholder="Логин">
+    <input type="password" id="password" placeholder="Пароль">
+    <button onclick="checkLogin()">Войти</button>
+  </div>
 </div>
 
 <!-- Форма добавления героя -->
 <div id="addPanel">
-    <h2 style="color:white;">Добавить героя</h2>
-    <input id="newTitle" placeholder="Имя героя">
-    <textarea id="newContent" placeholder="Описание..."></textarea>
-    <button onclick="addHero()">Добавить</button>
+  <h2 style="color:white;">Добавить героя</h2>
+  <input id="newTitle" placeholder="Имя героя">
+  <input id="newImage" placeholder="Ссылка на фото">
+  <textarea id="newContent" placeholder="Описание..."></textarea>
+  <img id="imagePreview" src="" alt="Предпросмотр фото">
+  <button onclick="addHero()">Добавить</button>
+</div>
+
+<!-- Форма редактирования героя -->
+<div id="editPanel">
+  <h2 style="color:white;">Редактировать героя</h2>
+  <input id="editTitle" placeholder="Имя героя">
+  <input id="editImage" placeholder="Ссылка на фото">
+  <textarea id="editContent" placeholder="Описание..."></textarea>
+  <img id="editImagePreview" src="" alt="Предпросмотр фото">
+  <div class="actions">
+    <button onclick="saveEdit()">Сохранить</button>
+    <button onclick="deleteHero()">Удалить</button>
+  </div>
 </div>
 
 <footer class="back-btn">
-    <a href="index.html">⬅ Назад</a>
+  <a href="index.html">⬅ Назад</a>
 </footer>
 
 <script>
-    const adminUser = "DenchikTop1";
-    const adminPass = "DenchikTop1";
+  const adminUser = "DenchikTop1";
+  const adminPass = "DenchikTop1";
 
-    let heroesList = JSON.parse(localStorage.getItem("soviet_heroes")) || [
-        {
-            title: "Саша Бородулин",
-            content: "Юный разведчик, погибший, спасая товарищей. Его имя стало символом мужества школьников в годы войны."
-        },
-        {
-            title: "Зоя Космодемьянская",
-            content: "Советская партизанка, казнённая фашистами. Её подвиг стал известен по всей стране."
-        },
-        {
-            title: "Пётр Вострухин",
-            content: "Участник Сталинградской битвы. Погиб, прикрывая роту огнём из пулемёта."
-        }
-    ];
-
-    function saveHeroes() {
-        localStorage.setItem("soviet_heroes", JSON.stringify(heroesList));
+  let heroesList = JSON.parse(localStorage.getItem("soviet_heroes")) || [
+    {
+      title: "Саша Бородулин",
+      content: "Юный разведчик, погибший, спасая товарищей. Его имя стало символом мужества школьников в годы войны.",
+      image: ""
+    },
+    {
+      title: "Зоя Космодемьянская",
+      content: "Советская партизанка, казнённая фашистами. Её подвиг стал известен по всей стране.",
+      image: ""
+    },
+    {
+      title: "Пётр Вострухин",
+      content: "Участник Сталинградской битвы. Погиб, прикрывая роту огнём из пулемёта.",
+      image: ""
     }
+  ];
 
-    function renderHeroes() {
-        const container = document.getElementById("heroesContainer");
-        container.innerHTML = "";
-        heroesList.forEach(hero => {
-            container.innerHTML += `
-                <div class="info-card">
-                    <h2 class="card-title">${hero.title}</h2>
-                    <p class="card-desc">${hero.content}</p>
-                </div>
-            `;
-        });
-    }
+  let editIndex = null;
 
-    function checkLogin() {
-        const user = document.getElementById("username").value.trim();
-        const pass = document.getElementById("password").value.trim();
+  function saveHeroes() {
+    localStorage.setItem("soviet_heroes", JSON.stringify(heroesList));
+  }
 
-        if (user === adminUser && pass === adminPass) {
-            localStorage.setItem("adminLogged", "true");
-            document.getElementById("loginForm").style.display = "none";
-            document.getElementById("addPanel").style.display = "block";
-        } else {
-            alert("⚠️ Логин или пароль неверны!");
-        }
-    }
-
-    function addHero() {
-        const title = document.getElementById("newTitle").value.trim();
-        const content = document.getElementById("newContent").value.trim();
-
-        if (!title || !content) return;
-
-        heroesList.push({ title, content });
-        saveHeroes();
-        renderHeroes();
-
-        document.getElementById("newTitle").value = "";
-        document.getElementById("newContent").value = "";
-        document.getElementById("addPanel").style.display = "none";
-    }
-
-    document.querySelector(".admin-btn").addEventListener("click", () => {
-        if (localStorage.getItem("adminLogged") === "true") {
-            document.getElementById("addPanel").style.display = "block";
-        } else {
-            document.getElementById("loginForm").style.display = "flex";
-        }
+  function renderHeroes() {
+    const container = document.getElementById("heroesContainer");
+    container.innerHTML = "";
+    heroesList.forEach((hero, index) => {
+      container.innerHTML += `
+        <div class="info-card">
+          ${hero.image ? `<img src="${hero.image}" class="card-img">` : ''}
+          <div class="card-content">
+            <h2 class="card-title">${hero.title}</h2>
+            <p class="card-desc">${hero.content}</p>
+            ${localStorage.getItem("adminLogged") === "true" ? `<button onclick="openEdit(${index})">Редактировать</button>` : ''}
+          </div>
+        </div>
+      `;
     });
+  }
 
+  function checkLogin() {
+    const user = document.getElementById("username").value.trim();
+    const pass = document.getElementById("password").value.trim();
+
+    if (user === adminUser && pass === adminPass) {
+      localStorage.setItem("adminLogged", "true");
+      document.getElementById("loginForm").style.display = "none";
+      document.getElementById("addPanel").style.display = "block";
+      renderHeroes();
+    } else {
+      alert("⚠️ Логин или пароль неверны!");
+    }
+  }
+
+  function addHero() {
+    const title = document.getElementById("newTitle").value.trim();
+    const content = document.getElementById("newContent").value.trim();
+    const image = document.getElementById("newImage").value.trim();
+
+    if (!title || !content) return;
+
+    heroesList.push({ title, content, image });
+    saveHeroes();
     renderHeroes();
+
+    document.getElementById("newTitle").value = "";
+    document.getElementById("newContent").value = "";
+    document.getElementById("newImage").value = "";
+    document.getElementById("imagePreview").style.display = "none";
+    document.getElementById("addPanel").style.display = "none";
+  }
+
+  function openEdit(index) {
+    editIndex = index;
+    const hero = heroesList[index];
+    document.getElementById("editTitle").value = hero.title;
+    document.getElementById("editContent").value = hero.content;
+    document.getElementById("editImage").value = hero.image;
+    const preview = document.getElementById("editImagePreview");
+    if (hero.image) {
+      preview.src = hero.image;
+      preview.style.display = "block";
+    } else {
+      preview.style.display = "none";
+    }
+    document.getElementById("addPanel").style.display = "none";
+    document.getElementById("editPanel").style.display = "block";
+  }
+
+  function saveEdit() {
+    const title = document.getElementById("editTitle").value.trim();
+    const content = document.getElementById("editContent").value.trim();
+    const image = document.getElementById("editImage").value.trim();
+
+    if (!title || !content || editIndex === null) return;
+
+    heroesList[editIndex] = { title, content, image };
+    saveHeroes();
+    editIndex = null;
+    document.getElementById("editPanel").style.display = "none";
+    renderHeroes();
+  }
+
+  function deleteHero() {
+    if (confirm("Вы уверены, что хотите удалить этого героя?")) {
+      heroesList.splice(editIndex, 1);
+      saveHeroes();
+      editIndex = null;
+      document.getElementById("editPanel").style.display = "none";
+      renderHeroes();
+    }
+  }
+
+  // Предпросмотр изображения
+  document.getElementById("newImage").addEventListener("input", function () {
+    const url = this.value;
+    const preview = document.getElementById("imagePreview");
+    if (url) {
+      preview.src = url;
+      preview.style.display = "block";
+    } else {
+      preview.style.display = "none";
+    }
+  });
+
+  document.getElementById("editImage").addEventListener("input", function () {
+    const url = this.value;
+    const preview = document.getElementById("editImagePreview");
+    if (url) {
+      preview.src = url;
+      preview.style.display = "block";
+    } else {
+      preview.style.display = "none";
+    }
+  });
+
+  document.querySelector(".admin-btn").addEventListener("click", () => {
+    if (localStorage.getItem("adminLogged") === "true") {
+      document.getElementById("addPanel").style.display = "block";
+      document.getElementById("editPanel").style.display = "none";
+    } else {
+      document.getElementById("loginForm").style.display = "flex";
+    }
+  });
+
+  renderHeroes();
 </script>
 
 </body>
