@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <title>Оружие</title>
+  <title>Оружие и вооружение</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto&display=swap" rel="stylesheet">
   <style>
@@ -25,28 +25,32 @@
       font-family: 'Playfair Display', serif;
     }
 
-    .sub-header {
-      text-align: center;
-      font-size: 2rem;
-      margin: 1rem 0;
-      font-family: 'Playfair Display', serif;
-      color: #ff3b3b;
-    }
-
-    .cards-section {
-      max-width: 1200px;
-      margin: 2rem auto;
+    .tabs {
       display: flex;
-      flex-direction: column;
+      justify-content: center;
       gap: 2rem;
-      padding: 1rem;
+      margin: 1rem 0;
     }
 
-    @media (min-width: 768px) {
-      .cards-section {
-        flex-direction: row;
-        flex-wrap: wrap;
-      }
+    .tab {
+      cursor: pointer;
+      padding: 1rem 2rem;
+      background: #333;
+      border-radius: 10px;
+      transition: background 0.3s;
+    }
+
+    .tab.active {
+      background: #ff3b3b;
+      color: black;
+    }
+
+    .cards-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2rem;
+      padding: 2rem;
+      justify-content: center;
     }
 
     .card {
@@ -56,18 +60,24 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 1rem;
+      width: 300px;
+      min-height: 300px;
       padding: 1.5rem;
       box-shadow: 0 0 10px #000;
       border: 1px solid #444;
-      position: relative;
+      transition: transform 0.3s;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
     }
 
     .card img {
       width: 100%;
-      height: 200px;
+      height: auto;
       object-fit: cover;
       border-radius: 15px;
+      margin-bottom: 1rem;
     }
 
     .card-title {
@@ -80,27 +90,6 @@
     .card-desc {
       font-size: 1rem;
       text-align: center;
-    }
-
-    .card-actions {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      display: none;
-    }
-
-    .card:hover .card-actions {
-      display: block;
-    }
-
-    .card-actions button {
-      background: #c21010;
-      border: none;
-      color: white;
-      padding: 5px 10px;
-      margin-left: 5px;
-      border-radius: 5px;
-      cursor: pointer;
     }
 
     .admin-btn {
@@ -119,7 +108,9 @@
     }
 
     /* Формы */
-    #loginForm, #addPanel, #editPanel {
+    #loginForm,
+    #addPanel,
+    #editPanel {
       position: fixed;
       top: 0;
       left: 0;
@@ -143,7 +134,8 @@
 
     .form-box input,
     .form-box textarea,
-    .form-box button {
+    .form-box button,
+    .form-box select {
       width: 100%;
       padding: 0.75rem;
       margin: 0.5rem 0;
@@ -151,25 +143,14 @@
       border-radius: 10px;
     }
 
-    .custom-file-input {
-      background: #333;
-      padding: 10px;
-      border-radius: 10px;
+    .search-button {
+      background: #4caf50;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      margin-top: 0.5rem;
+      border-radius: 5px;
       cursor: pointer;
-      text-align: center;
-      margin-top: 1rem;
-    }
-
-    .custom-file-input input[type="file"] {
-      display: none;
-    }
-
-    .preview-img {
-      display: none;
-      width: 100%;
-      max-height: 200px;
-      margin-top: 1rem;
-      border-radius: 10px;
     }
 
     footer.back-btn a {
@@ -188,17 +169,36 @@
       background: #ff3b3b;
       color: #222 !important;
     }
+
+    .card-actions {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+    }
+
+    .card-actions button {
+      background: #c21010;
+      border: none;
+      color: white;
+      padding: 5px 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1rem;
+    }
   </style>
 </head>
 <body>
 
 <header class="header">
-  <h1>Оружие</h1>
+  <h1>Оружие и вооружение</h1>
 </header>
 
-<div class="sub-header">Оружие</div>
+<div class="tabs">
+  <div class="tab active" onclick="switchTab('weapon')">Оружие</div>
+  <div class="tab" onclick="switchTab('equipment')">Вооружение</div>
+</div>
 
-<div class="cards-section" id="weaponsList"></div>
+<div class="cards-container" id="cardsContainer"></div>
 
 <button class="admin-btn">+</button>
 
@@ -216,12 +216,14 @@
 <div id="addPanel">
   <div class="form-box">
     <h2 style="color:white;">Добавить элемент</h2>
-    <input id="newTitle" placeholder="Название оружия">
+    <select id="categorySelect">
+      <option value="weapon">Оружие</option>
+      <option value="equipment">Вооружение</option>
+    </select>
+    <input id="newTitle" placeholder="Название">
     <textarea id="newContent" placeholder="Описание..."></textarea>
-    <label class="custom-file-input">Выбрать изображение
-      <input type="file" id="newImageFile" accept="image/*" onchange="previewNewImage()">
-    </label>
-    <img id="imagePreview" src="" class="preview-img" alt="Предпросмотр">
+    <input id="newImageLink" placeholder="Ссылка на изображение">
+    <button class="search-button" onclick="searchOnlineInfo()">🔍 Найти в интернете</button>
     <button onclick="addItem()">Добавить</button>
   </div>
 </div>
@@ -230,14 +232,16 @@
 <div id="editPanel">
   <div class="form-box">
     <h2 style="color:white;">Редактировать элемент</h2>
-    <input id="editTitle" placeholder="Название оружия">
+    <select id="editCategorySelect">
+      <option value="weapon">Оружие</option>
+      <option value="equipment">Вооружение</option>
+    </select>
+    <input id="editTitle" placeholder="Название">
     <textarea id="editContent" placeholder="Описание..."></textarea>
-    <label class="custom-file-input">Изменить изображение
-      <input type="file" id="editImageFile" accept="image/*" onchange="previewEditImage()">
-    </label>
-    <img id="editImagePreview" src="" class="preview-img" alt="Предпросмотр">
+    <input id="editImageLink" placeholder="Ссылка на изображение">
+    <button class="search-button" onclick="searchEditOnlineInfo()">🔍 Найти в интернете</button>
     <button onclick="saveEdit()">Сохранить</button>
-    <button onclick="deleteItem()" style="background:#c21010; margin-top:0.5rem;">Удалить</button>
+    <button onclick="deleteItem()" style="background:#c21010; margin-top:0.5rem;">🗑 Удалить</button>
   </div>
 </div>
 
@@ -249,35 +253,37 @@
   const adminUser = "DenchikTop1";
   const adminPass = "DenchikTop1";
 
-  let items = JSON.parse(localStorage.getItem("weaponItems")) || [
-    {
-      title: "АК-47",
-      description: "Классическое советское стрелковое оружие, известное своей надёжностью и мощью.",
-      image: "https://via.placeholder.com/600x200?text=AK-47"
-    }
-  ];
+  let weapons = JSON.parse(localStorage.getItem("weapons")) || [];
+  let equipments = JSON.parse(localStorage.getItem("equipments")) || [];
 
-  let currentImageBase64 = null;
+  let currentTab = "weapon";
   let editIndex = null;
+  let editType = "";
 
-  function saveItems() {
-    localStorage.setItem("weaponItems", JSON.stringify(items));
+  function saveData() {
+    localStorage.setItem("weapons", JSON.stringify(weapons));
+    localStorage.setItem("equipments", JSON.stringify(equipments));
+  }
+
+  function switchTab(tab) {
+    currentTab = tab;
+    document.querySelectorAll(".tab").forEach(el => el.classList.remove("active"));
+    document.querySelector(`.tab[onclick="switchTab('${tab}')"]`).classList.add("active");
+    renderCards();
   }
 
   function renderCards() {
-    const weaponsDiv = document.getElementById("weaponsList");
-    weaponsDiv.innerHTML = "";
+    const container = document.getElementById("cardsContainer");
+    const items = currentTab === "weapon" ? weapons : equipments;
+
+    container.innerHTML = "";
     items.forEach((item, index) => {
-      weaponsDiv.innerHTML += `
+      container.innerHTML += `
         <div class="card">
           <img src="${item.image}" alt="${item.title}">
           <h2 class="card-title">${item.title}</h2>
           <p class="card-desc">${item.description}</p>
-          ${localStorage.getItem("adminLogged") === "true" ? `
-            <div class="card-actions">
-              <button onclick="openEdit(${index})">✏️</button>
-            </div>
-          ` : ''}
+          ${localStorage.getItem("adminLogged") === "true" ? `<div class="card-actions"><button onclick="openEdit(${index}, '${currentTab}')">✏️</button></div>` : ''}
         </div>
       `;
     });
@@ -296,95 +302,95 @@
     }
   }
 
-  function previewNewImage() {
-    const fileInput = document.getElementById('newImageFile');
-    const file = fileInput.files[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = function(e) {
-      document.getElementById("imagePreview").src = e.target.result;
-      document.getElementById("imagePreview").style.display = "block";
-      window.currentImageBase64 = e.target.result;
-    };
-    reader.readAsDataURL(file);
-  }
-
   function addItem() {
     const title = document.getElementById("newTitle").value.trim();
     const desc = document.getElementById("newContent").value.trim();
-    const image = currentImageBase64 || "";
+    const image = document.getElementById("newImageLink").value.trim();
+    const category = document.getElementById("categorySelect").value;
 
-    if (!title || !desc) return;
+    if (!title || !desc || !image) return;
 
-    items.push({ title, description: desc, image });
-    saveItems();
-    renderCards();
-
-    document.getElementById("newTitle").value = "";
-    document.getElementById("newContent").value = "";
-    document.getElementById("imagePreview").src = "";
-    document.getElementById("imagePreview").style.display = "none";
-    window.currentImageBase64 = null;
-    document.getElementById("newImageFile").value = "";
-    document.getElementById("addPanel").style.display = "none";
-  }
-
-  function openEdit(index) {
-    editIndex = index;
-    const item = items[index];
-    document.getElementById("editTitle").value = item.title;
-    document.getElementById("editContent").value = item.description;
-    const preview = document.getElementById("editImagePreview");
-
-    if (item.image) {
-      preview.src = item.image;
-      preview.style.display = "block";
+    if (category === "weapon") {
+      weapons.push({ title, description: desc, image });
     } else {
-      preview.style.display = "none";
+      equipments.push({ title, description: desc, image });
     }
 
-    document.getElementById("editPanel").style.display = "flex";
+    saveData();
+    renderCards();
+
+    // Сброс формы
+    document.getElementById("newTitle").value = "";
+    document.getElementById("newContent").value = "";
+    document.getElementById("newImageLink").value = "";
     document.getElementById("addPanel").style.display = "none";
   }
 
-  function previewEditImage() {
-    const fileInput = document.getElementById('editImageFile');
-    const file = fileInput.files[0];
-    if (!file) return;
+  function openEdit(index, type) {
+    editIndex = index;
+    editType = type;
+    const item = type === "weapon" ? weapons[index] : equipments[index];
 
-    const reader = new FileReader();
-    reader.onload = function(e) {
-      document.getElementById("editImagePreview").src = e.target.result;
-      document.getElementById("editImagePreview").style.display = "block";
-      window.currentImageBase64 = e.target.result;
-    };
-    reader.readAsDataURL(file);
+    document.getElementById("editTitle").value = item.title;
+    document.getElementById("editContent").value = item.description;
+    document.getElementById("editImageLink").value = item.image;
+    document.getElementById("editCategorySelect").value = type;
+
+    document.getElementById("addPanel").style.display = "none";
+    document.getElementById("editPanel").style.display = "flex";
   }
 
   function saveEdit() {
     const title = document.getElementById("editTitle").value.trim();
     const desc = document.getElementById("editContent").value.trim();
-    const image = currentImageBase64 || items[editIndex].image;
+    const image = document.getElementById("editImageLink").value.trim();
+    const category = document.getElementById("editCategorySelect").value;
 
-    if (!title || !desc || editIndex === null) return;
+    if (!title || !desc || !image || editIndex === null) return;
 
-    items[editIndex] = { title, description: desc, image };
-    saveItems();
+    if (editType === "weapon") {
+      weapons[editIndex] = { title, description: desc, image };
+    } else {
+      equipments[editIndex] = { title, description: desc, image };
+    }
+
+    saveData();
     renderCards();
-
     document.getElementById("editPanel").style.display = "none";
     editIndex = null;
-    currentImageBase64 = null;
+    editType = "";
   }
 
   function deleteItem() {
     if (confirm("Вы уверены, что хотите удалить эту карточку?")) {
-      items.splice(editIndex, 1);
-      saveItems();
+      if (editType === "weapon") {
+        weapons.splice(editIndex, 1);
+      } else {
+        equipments.splice(editIndex, 1);
+      }
+      saveData();
       renderCards();
       document.getElementById("editPanel").style.display = "none";
       editIndex = null;
+      editType = "";
+    }
+  }
+
+  function searchOnlineInfo() {
+    const title = document.getElementById("newTitle").value.trim();
+    if (title) {
+      window.open("https://www.google.com/search?q=" + encodeURIComponent(title), "_blank");
+    } else {
+      alert("Введите название для поиска");
+    }
+  }
+
+  function searchEditOnlineInfo() {
+    const title = document.getElementById("editTitle").value.trim();
+    if (title) {
+      window.open("https://www.google.com/search?q=" + encodeURIComponent(title), "_blank");
+    } else {
+      alert("Введите название для поиска");
     }
   }
 
@@ -396,7 +402,9 @@
     }
   });
 
-  renderCards();
+  document.addEventListener("DOMContentLoaded", () => {
+    switchTab("weapon");
+  });
 </script>
 
 </body>
