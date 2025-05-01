@@ -1,258 +1,485 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8" />
-    <title>История</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto&display=swap" rel="stylesheet">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Roboto', sans-serif;
-        }
+  <meta charset="UTF-8" />
+  <title>История войны</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Roboto', sans-serif;
+    }
 
-        body {
-            background: #1a1a1a;
-            color: white;
-        }
+    body {
+      background: #1a1a1a;
+      color: white;
+    }
 
-        .header {
-            background: linear-gradient(to right, #c21010, #e63946);
-            text-align: center;
-            padding: 2rem;
-            font-family: 'Playfair Display', serif;
-        }
+    .header {
+      background: linear-gradient(to right, #c21010, #e63946);
+      text-align: center;
+      padding: 2rem;
+      font-family: 'Playfair Display', serif;
+    }
 
-        .container {
-            max-width: 1200px;
-            margin: auto;
-            padding: 1rem;
-        }
+    .container {
+      max-width: 1200px;
+      margin: auto;
+      padding: 1rem;
+    }
 
-        .info-card {
-            background: #222;
-            border-radius: 15px;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            box-shadow: 0 0 10px #000;
-        }
+    /* Слайдер */
+    .slider-container {
+      position: relative;
+      width: 100%;
+      height: 300px;
+      overflow: hidden;
+      border-radius: 15px;
+      margin-bottom: 2rem;
+    }
 
-        h2.card-title {
-            color: #ff3b3b;
-            font-family: 'Playfair Display', serif;
-            margin-bottom: 0.5rem;
-        }
+    .slides {
+      display: flex;
+      width: 100%;
+      height: 100%;
+      transition: transform 0.5s ease-in-out;
+    }
 
-        .card-desc {
-            font-size: 1rem;
-        }
+    .slide {
+      min-width: 100%;
+      height: 100%;
+      background-size: cover;
+      background-position: center;
+    }
 
-        .admin-btn {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: #ff3b3b;
-            color: white;
-            border: none;
-            width: 50px;
-            height: 50px;
-            font-size: 1.5rem;
-            border-radius: 50%;
-            cursor: pointer;
-            z-index: 999;
-        }
+    .slider-controls {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      padding: 0 1rem;
+      z-index: 10;
+    }
 
-        #loginForm {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.95);
-            display: none;
-            align-items: center;
-            justify-content: center;
-        }
+    .slider-controls button {
+      background: rgba(0, 0, 0, 0.5);
+      color: white;
+      border: none;
+      padding: 10px;
+      cursor: pointer;
+      font-size: 1.2rem;
+      border-radius: 50%;
+    }
 
-        .login-box {
-            background: #222;
-            padding: 2rem;
-            border-radius: 10px;
-            width: 90%;
-            max-width: 400px;
-            text-align: center;
-        }
+    /* Инфо карточки */
+    .info-card {
+      background: #222;
+      border-radius: 15px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 0 10px #000;
+    }
 
-        .login-box input {
-            width: 100%;
-            padding: 10px;
-            margin: 1rem 0;
-            border: none;
-            border-radius: 10px;
-        }
+    .card-img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 10px;
+      margin-top: 10px;
+      margin-bottom: 10px;
+    }
 
-        .login-box button {
-            width: 100%;
-            padding: 10px;
-            background-color: #ff3b3b;
-            border: none;
-            color: white;
-            border-radius: 10px;
-            cursor: pointer;
-        }
+    h2.card-title {
+      color: #ff3b3b;
+      font-family: 'Playfair Display', serif;
+      margin-bottom: 0.5rem;
+    }
 
-        #addPanel {
-            display: none;
-            margin-top: 2rem;
-            background: #1c1c1c;
-            padding: 1.5rem;
-            border-radius: 10px;
-        }
+    .card-desc {
+      font-size: 1rem;
+    }
 
-        #addPanel input,
-        #addPanel textarea,
-        #addPanel button {
-            width: 100%;
-            padding: 0.75rem;
-            margin: 1rem 0;
-            border: none;
-            border-radius: 10px;
-        }
+    .admin-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #ff3b3b;
+      color: white;
+      border: none;
+      width: 50px;
+      height: 50px;
+      font-size: 1.5rem;
+      border-radius: 50%;
+      cursor: pointer;
+      z-index: 999;
+    }
 
-        #addPanel textarea {
-            resize: vertical;
-            min-height: 100px;
-        }
+    #loginForm {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.95);
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
 
-        #addPanel button {
-            background: #ff3b3b;
-            color: white;
-            cursor: pointer;
-        }
+    .login-box {
+      background: #222;
+      padding: 2rem;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 400px;
+      text-align: center;
+    }
 
-        footer.back-btn a {
-            display: block;
-            text-align: center;
-            margin-top: 2rem;
-            background: #222;
-            color: #ff3b3b !important;
-            padding: 0.8rem 2rem;
-            border-radius: 20px;
-            text-decoration: none;
-            border: 2px solid #ff3b3b;
-        }
+    .login-box input {
+      width: 100%;
+      padding: 10px;
+      margin: 1rem 0;
+      border: none;
+      border-radius: 10px;
+    }
 
-        footer.back-btn a:hover {
-            background: #ff3b3b;
-            color: #222 !important;
-        }
-    </style>
+    .login-box button {
+      width: 100%;
+      padding: 10px;
+      background-color: #ff3b3b;
+      border: none;
+      color: white;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    #addPanel,
+    #sliderPanel {
+      display: none;
+      margin-top: 2rem;
+      background: #1c1c1c;
+      padding: 1.5rem;
+      border-radius: 10px;
+    }
+
+    #addPanel input,
+    #addPanel textarea,
+    #addPanel button,
+    #sliderPanel input,
+    #sliderPanel textarea,
+    #sliderPanel button {
+      width: 100%;
+      padding: 0.75rem;
+      margin: 1rem 0;
+      border: none;
+      border-radius: 10px;
+    }
+
+    #addPanel textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    #addPanel button,
+    #sliderPanel button {
+      background: #ff3b3b;
+      color: white;
+      cursor: pointer;
+    }
+
+    .custom-file-input {
+      background: #333;
+      padding: 10px;
+      border-radius: 10px;
+      cursor: pointer;
+      text-align: center;
+    }
+
+    .custom-file-input input[type="file"] {
+      display: none;
+    }
+
+    footer.back-btn a {
+      display: block;
+      text-align: center;
+      margin-top: 2rem;
+      background: #222;
+      color: #ff3b3b !important;
+      padding: 0.8rem 2rem;
+      border-radius: 20px;
+      text-decoration: none;
+      border: 2px solid #ff3b3b;
+    }
+
+    footer.back-btn a:hover {
+      background: #ff3b3b;
+      color: #222 !important;
+    }
+  </style>
 </head>
 <body>
 
 <header class="header">
-    <h1>История войны</h1>
+  <h1>История войны</h1>
 </header>
 
-<main class="container" id="historyContainer"></main>
-
-<button class="admin-btn">+</button>
-
-<div id="loginForm">
-    <div class="login-box">
-        <h2>🔐 Авторизация</h2>
-        <input type="text" id="username" placeholder="Логин">
-        <input type="password" id="password" placeholder="Пароль">
-        <button onclick="checkLogin()">Войти</button>
-    </div>
+<!-- Слайдер -->
+<div class="slider-container">
+  <div class="slides" id="slider"></div>
+  <div class="slider-controls">
+    <button onclick="prevSlide()">‹</button>
+    <button onclick="nextSlide()">›</button>
+  </div>
 </div>
 
+<!-- Основной контент -->
+<main class="container" id="historyContainer"></main>
+
+<!-- Кнопка администратора -->
+<button class="admin-btn">+</button>
+
+<!-- Форма авторизации -->
+<div id="loginForm">
+  <div class="login-box">
+    <h2>🔐 Авторизация</h2>
+    <input type="text" id="username" placeholder="Логин">
+    <input type="password" id="password" placeholder="Пароль">
+    <button onclick="checkLogin()">Войти</button>
+  </div>
+</div>
+
+<!-- Форма добавления текста -->
 <div id="addPanel">
-    <h2 style="color:white;">Добавить текст</h2>
-    <input id="newTitle" placeholder="Заголовок">
-    <textarea id="newContent" placeholder="Текст истории"></textarea>
-    <button onclick="addParagraph()">Добавить</button>
+  <h2 style="color:white;">Добавить текст</h2>
+  <input id="newTitle" placeholder="Заголовок">
+  <textarea id="newContent" placeholder="Текст истории"></textarea>
+
+  <label class="custom-file-input">Выбрать фото
+    <input type="file" id="newImageFile" accept="image/*" onchange="previewNewImage()">
+  </label>
+  <img id="imagePreview" src="" alt="Предпросмотр" style="display:none; width:100%; max-height:150px; margin-top:10px;">
+
+  <button onclick="addParagraph()">Добавить</button>
+</div>
+
+<!-- Форма для слайдера -->
+<div id="sliderPanel">
+  <h2 style="color:white;">Управление слайдером</h2>
+
+  <label class="custom-file-input">Выбрать изображение
+    <input type="file" id="sliderImageFile" accept="image/*" onchange="previewAndAddSliderImage()">
+  </label>
+  <img id="sliderPreview" src="" alt="Предпросмотр" style="display:none; width:100%; max-height:200px; margin-top:10px;">
+  <button onclick="addSliderImage()">Добавить изображение</button>
+
+  <hr style="margin: 1rem 0;">
+  <div id="sliderList"></div>
 </div>
 
 <footer class="back-btn">
-    <a href="index.html">⬅ Назад</a>
+  <a href="index.html">⬅ Назад</a>
 </footer>
 
 <script>
-    const adminUser = "DenchikTop1";
-    const adminPass = "DenchikTop1";
+  const adminUser = "DenchikTop1";
+  const adminPass = "DenchikTop1";
 
-    let historyData = JSON.parse(localStorage.getItem("history")) || [
-        {
-            title: "Краткая история",
-            content: "Великая Отечественная война началась 22 июня 1941 года и закончилась 9 мая 1945 года..."
-        },
-        {
-            title: "Начало войны",
-            content: "22 июня 1941 года — операция «Барбаросса». Германия напала на СССР без объявления войны."
-        },
-        {
-            title: "Битва под Москвой",
-            content: "Зимой 1941–1942 годов советские войска отразили фашистов у стен столицы. Это стала первой крупной победой."
-        }
-    ];
+  let historyData = JSON.parse(localStorage.getItem("history")) || [
+    {
+      title: "Краткая история",
+      content: "Великая Отечественная война началась 22 июня 1941 года и закончилась 9 мая 1945 года...",
+      image: ""
+    },
+    {
+      title: "Начало войны",
+      content: "22 июня 1941 года — операция «Барбаросса». Германия напала на СССР без объявления войны.",
+      image: ""
+    }
+  ];
 
-    function saveHistory() {
-        localStorage.setItem("history", JSON.stringify(historyData));
+  let sliderImages = JSON.parse(localStorage.getItem("sliderImages")) || [];
+
+  let currentSlide = 0;
+  let currentImageBase64 = null;
+
+  function saveHistory() {
+    localStorage.setItem("history", JSON.stringify(historyData));
+  }
+
+  function saveSlider() {
+    localStorage.setItem("sliderImages", JSON.stringify(sliderImages));
+  }
+
+  function renderHistory() {
+    const container = document.getElementById("historyContainer");
+    container.innerHTML = "";
+    historyData.forEach(item => {
+      container.innerHTML += `
+        <div class="info-card">
+          ${item.image ? `<img src="${item.image}" class="card-img">` : ''}
+          <h2 class="card-title">${item.title}</h2>
+          <p class="card-desc">${item.content}</p>
+        </div>
+      `;
+    });
+  }
+
+  function renderSlider() {
+    const slidesContainer = document.getElementById("slider");
+    slidesContainer.innerHTML = "";
+
+    if (sliderImages.length === 0) {
+      slidesContainer.innerHTML = `<div class="slide" style="background-color:#333;"></div>`;
+      return;
     }
 
-    function renderHistory() {
-        const container = document.getElementById("historyContainer");
-        container.innerHTML = "";
-        historyData.forEach(item => {
-            container.innerHTML += `
-                <div class="info-card">
-                    <h2 class="card-title">${item.title}</h2>
-                    <p class="card-desc">${item.content}</p>
-                </div>
-            `;
-        });
-    }
-
-    function checkLogin() {
-        const user = document.getElementById("username").value.trim();
-        const pass = document.getElementById("password").value.trim();
-
-        if (user === adminUser && pass === adminPass) {
-            localStorage.setItem("adminLogged", "true");
-            document.getElementById("loginForm").style.display = "none";
-            document.getElementById("addPanel").style.display = "block";
-        } else {
-            alert("⚠️ Логин или пароль неверны!");
-        }
-    }
-
-    function addParagraph() {
-        const title = document.getElementById("newTitle").value.trim();
-        const content = document.getElementById("newContent").value.trim();
-
-        if (!title || !content) return;
-
-        historyData.push({ title, content });
-        saveHistory();
-        renderHistory();
-
-        document.getElementById("newTitle").value = "";
-        document.getElementById("newContent").value = "";
-        document.getElementById("addPanel").style.display = "none";
-    }
-
-    document.querySelector(".admin-btn").addEventListener("click", () => {
-        if (localStorage.getItem("adminLogged") === "true") {
-            document.getElementById("addPanel").style.display = "block";
-        } else {
-            document.getElementById("loginForm").style.display = "flex";
-        }
+    sliderImages.forEach(url => {
+      slidesContainer.innerHTML += `
+        <div class="slide" style="background-image: url('${url}');"></div>
+      `;
     });
 
+    updateSlide();
+  }
+
+  function renderSliderList() {
+    const list = document.getElementById("sliderList");
+    list.innerHTML = "";
+
+    sliderImages.forEach((url, index) => {
+      list.innerHTML += `
+        <div style="margin-bottom:1rem; display:flex; gap:10px; align-items:center;">
+          <img src="${url}" style="width:60px; height:60px; object-fit:cover; border-radius:10px;">
+          <button onclick="deleteSlide(${index})" style="background:#c21010; padding:5px 10px; border:none; border-radius:5px;">Удалить</button>
+        </div>
+      `;
+    });
+  }
+
+  function previewAndAddSliderImage() {
+    const fileInput = document.getElementById('sliderImageFile');
+    const file = fileInput.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      sliderImages.push(e.target.result); // Base64
+      saveSlider();
+      renderSlider();
+      renderSliderList();
+
+      document.getElementById("sliderPreview").src = e.target.result;
+      document.getElementById("sliderPreview").style.display = "block";
+    };
+    reader.readAsDataURL(file);
+    fileInput.value = "";
+  }
+
+  function addSliderImage() {
+    document.getElementById("sliderImageFile").click();
+  }
+
+  function deleteSlide(index) {
+    if (confirm("Вы уверены, что хотите удалить этот слайд?")) {
+      sliderImages.splice(index, 1);
+      saveSlider();
+      renderSlider();
+      renderSliderList();
+    }
+  }
+
+  function checkLogin() {
+    const user = document.getElementById("username").value.trim();
+    const pass = document.getElementById("password").value.trim();
+
+    if (user === adminUser && pass === adminPass) {
+      localStorage.setItem("adminLogged", "true");
+      document.getElementById("loginForm").style.display = "none";
+      document.getElementById("addPanel").style.display = "block";
+      document.getElementById("sliderPanel").style.display = "block";
+      renderHistory();
+      renderSlider();
+      renderSliderList();
+    } else {
+      alert("⚠️ Логин или пароль неверны!");
+    }
+  }
+
+  function previewNewImage() {
+    const fileInput = document.getElementById('newImageFile');
+    const file = fileInput.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      document.getElementById("imagePreview").src = e.target.result;
+      document.getElementById("imagePreview").style.display = "block";
+      window.currentImageBase64 = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function addParagraph() {
+    const title = document.getElementById("newTitle").value.trim();
+    const content = document.getElementById("newContent").value.trim();
+    const image = currentImageBase64 || "";
+
+    if (!title || !content) return;
+
+    historyData.push({ title, content, image });
+    saveHistory();
     renderHistory();
+
+    document.getElementById("newTitle").value = "";
+    document.getElementById("newContent").value = "";
+    document.getElementById("imagePreview").style.display = "none";
+    window.currentImageBase64 = null;
+    document.getElementById("newImageFile").value = "";
+    document.getElementById("addPanel").style.display = "none";
+  }
+
+  // Слайдер
+  function updateSlide() {
+    const slides = document.querySelectorAll('.slide');
+    if (slides.length === 0) return;
+
+    const offset = -currentSlide * 100;
+    document.querySelector('.slides').style.transform = `translateX(${offset}%)`;
+  }
+
+  function nextSlide() {
+    currentSlide = (currentSlide + 1) % sliderImages.length;
+    updateSlide();
+  }
+
+  function prevSlide() {
+    currentSlide = (currentSlide - 1 + sliderImages.length) % sliderImages.length;
+    updateSlide();
+  }
+
+  // Автопрокрутка
+  setInterval(() => {
+    if (sliderImages.length > 1) nextSlide();
+  }, 5000);
+
+  // Инициализация
+  document.querySelector(".admin-btn").addEventListener("click", () => {
+    if (localStorage.getItem("adminLogged") === "true") {
+      document.getElementById("addPanel").style.display = "block";
+      document.getElementById("sliderPanel").style.display = "block";
+      renderSliderList();
+    } else {
+      document.getElementById("loginForm").style.display = "flex";
+    }
+  });
+
+  renderHistory();
+  renderSlider();
+  renderSliderList();
 </script>
 
 </body>
