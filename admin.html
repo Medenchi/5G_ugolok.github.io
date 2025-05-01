@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Центральная админ-панель</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Roboto', sans-serif;
+    }
+
+    body {
+      background: #1a1a1a;
+      color: white;
+    }
+
+    header.header {
+      background: linear-gradient(to right, #c21010, #e63946);
+      text-align: center;
+      padding: 2rem;
+      font-family: 'Playfair Display', serif;
+    }
+
+    .tabs {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      margin: 1rem 0;
+      flex-wrap: wrap;
+    }
+
+    .tab {
+      cursor: pointer;
+      padding: 1rem 2rem;
+      background: #333;
+      border-radius: 10px;
+      transition: background 0.3s;
+    }
+
+    .tab.active {
+      background: #ff3b3b;
+      color: black;
+    }
+
+    .admin-panel {
+      max-width: 800px;
+      margin: auto;
+      background: #222;
+      border-radius: 15px;
+      padding: 2rem;
+    }
+
+    input, textarea, select, button {
+      width: 100%;
+      padding: 0.75rem;
+      margin: 0.5rem 0;
+      border: none;
+      border-radius: 10px;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    button {
+      background: #ff3b3b;
+      color: white;
+      cursor: pointer;
+    }
+
+    .list {
+      margin-top: 2rem;
+    }
+
+    .list-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #333;
+      padding: 1rem;
+      border-radius: 10px;
+      margin-bottom: 1rem;
+    }
+
+    .list-item button {
+      background: #c21010;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .logout-btn {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      background: #4caf50;
+      color: white;
+      padding: 0.8rem 1.5rem;
+      border: none;
+      border-radius: 20px;
+      cursor: pointer;
+    }
+
+    .back-btn a {
+      display: block;
+      text-align: center;
+      margin-top: 2rem;
+      background: #222;
+      color: #ff3b3b !important;
+      padding: 0.8rem 2rem;
+      border-radius: 20px;
+      text-decoration: none;
+      border: 2px solid #ff3b3b;
+    }
+
+    .back-btn a:hover {
+      background: #ff3b3b;
+      color: #222 !important;
+    }
+  </style>
+</head>
+<body>
+
+<header class="header">
+  <h1>Центральная админ-панель</h1>
+</header>
+
+<div class="tabs">
+  <div class="tab active" onclick="switchTab('heroes')">Герои</div>
+  <div class="tab" onclick="switchTab('history')">История</div>
+  <div class="tab" onclick="switchTab('weapons')">Оружие</div>
+  <div class="tab" onclick="switchTab('equipment')">Вооружение</div>
+  <div class="tab" onclick="switchTab('admins')">🔧 Админы</div>
+</div>
+
+<div class="admin-panel" id="adminPanel">
+  <!-- Заголовок раздела -->
+  <h2 style="color:white;" id="panelTitle">Выберите раздел</h2>
+
+  <!-- Форма авторизации -->
+  <div id="loginForm">
+    <input type="text" id="username" placeholder="Логин">
+    <input type="password" id="password" placeholder="Пароль">
+    <button onclick="checkLogin()">Войти</button>
+  </div>
+
+  <!-- Панель управления контентом -->
+  <div id="controlPanel" style="display:none;">
+    <!-- Ввод данных -->
+    <select id="currentAdminSelect">
+      <option value="">Выберите аккаунт</option>
+    </select>
+
+    <input id="titleInput" placeholder="Заголовок / Имя героя / Название оружия">
+    <textarea id="contentInput" placeholder="Описание"></textarea>
+    <input id="imageInput" placeholder="Ссылка на изображение (если есть)">
+    <button onclick="addItem()">Добавить</button>
+
+    <!-- Список элементов -->
+    <div class="list" id="itemsList"></div>
+  </div>
+
+  <!-- Панель управления админами -->
+  <div id="adminsPanel" style="display:none;">
+    <input id="newAdminLogin" placeholder="Новый логин">
+    <input id="newAdminPass" placeholder="Новый пароль">
+    <button onclick="addAdmin()">Добавить админа</button>
+
+    <div class="list" id="adminsList"></div>
+  </div>
+</div>
+
+<button class="logout-btn" onclick="logout()">⬅ Выйти</button>
+
+<a href="index.html" class="back-btn" style="margin: 2rem; display:block;">⬅ Вернуться на сайт</a>
+
+<script>
+  // --- Хэширование паролей ---
+  async function hashPassword(password) {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(password);
+    const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  }
+
+  // --- Список администраторов ---
+  let admins = JSON.parse(localStorage.getItem("admins")) || [
+    { login: "DenchikTop1", password: "DenchikTop1" }
+  ];
+
+  // --- Данные разделов ---
+  let heroes = JSON.parse(localStorage.getItem("soviet_heroes")) || [];
+  let historyData = JSON.parse(localStorage.getItem("history")) || [];
+  let weapons = JSON.parse(localStorage.getItem("weapons")) || [];
+  let equipments = JSON.parse(localStorage.getItem("equipments")) || [];
+
+  let currentSection = null;
+
+  function saveData() {
+    localStorage.setItem("soviet_heroes", JSON.stringify(heroes));
+    localStorage.setItem("history", JSON.stringify(historyData));
+    localStorage.setItem("weapons", JSON.stringify(weapons));
+    localStorage.setItem("equipments", JSON.stringify(equipments));
+    localStorage.setItem("admins", JSON.stringify(admins));
+  }
+
+  function checkLogin() {
+    const user = document.getElementById("username").value.trim();
+    const pass = document.getElementById("password").value.trim();
+
+    hashPassword(pass).then(hashedPass => {
+      const admin = admins.find(a => a.login === user && a.password === hashedPass);
+
+      if (admin) {
+        localStorage.setItem("adminLogged", "true");
+        document.getElementById("loginForm").style.display = "none";
+        document.getElementById("controlPanel").style.display = "block";
+        switchTab("heroes"); // Открыть первый раздел
+        renderItems();
+      } else {
+        alert("⚠️ Логин или пароль неверны!");
+      }
+
+      // Если это старый админ — перехэшируем его
+      const realAdmin = admins.find(a => a.login === user && a.password === pass);
+      if (realAdmin) {
+        realAdmin.password = hashedPass;
+        saveData();
+      }
+    });
+  }
+
+  function switchTab(tab) {
+    currentSection = tab;
+    document.querySelectorAll(".tab").forEach(el => el.classList.remove("active"));
+    document.querySelector(`.tab[onclick="switchTab('${tab}')"]`).classList.add("active");
+
+    // Переключаем панели
+    document.getElementById("controlPanel").style.display = ["heroes", "history", "weapons", "equipment"].includes(tab) ? "block" : "none";
+    document.getElementById("adminsPanel").style.display = tab === "admins" ? "block" : "none";
+
+    // Рендерим нужные данные
+    if (["heroes", "history", "weapons", "equipment"].includes(tab)) {
+      renderItems();
+    } else if (tab === "admins") {
+      renderAdminList();
+    }
+  }
+
+  function renderItems() {
+    const container = document.getElementById("itemsList");
+    const titleEl = document.getElementById("panelTitle");
+    const imageInput = document.getElementById("imageInput");
+
+    let items = [];
+    let titleText = "";
+
+    switch(currentSection) {
+      case "heroes":
+        items = heroes;
+        titleText = "Герои Советского Союза";
+        imageInput.style.display = "block";
+        break;
+      case "history":
+        items = historyData;
+        titleText = "История войны";
+        imageInput.style.display = "none";
+        break;
+      case "weapons":
+        items = weapons;
+        titleText = "Оружие";
+        imageInput.style.display = "block";
+        break;
+      case "equipment":
+        items = equipments;
+        titleText = "Вооружение";
+        imageInput.style.display = "block";
+        break;
+    }
+
+    titleEl.textContent = titleText;
+    container.innerHTML = "";
+
+    items.forEach((item, index) => {
+      const title = item.title;
+      const content = item.content || item.description;
+      const image = item.image ? `<br><small>Фото: ${item.image}</small>` : '';
+      container.innerHTML += `
+        <div class="list-item">
+          <div style="flex:1;">
+            <strong>${title}</strong><br>
+            <small>${content ? content.substring(0, 60) + (content.length > 60 ? '...' : '') : ''}</small>${image}
+          </div>
+          <div>
+            <button onclick="editItem(${index})">✏️</button>
+            <button onclick="deleteItem(${index})">🗑</button>
+          </div>
+        </div>
+      `;
+    });
+
+    updateAdminSelect();
+  }
+
+  function addItem() {
+    const title = document.getElementById("titleInput").value.trim();
+    const content = document.getElementById("contentInput").value.trim();
+    const image = document.getElementById("imageInput").value.trim();
+
+    if (!title || !content) return;
+
+    let newItem;
+    switch(currentSection) {
+      case "heroes":
+        newItem = { title, content, image };
+        heroes.push(newItem);
+        break;
+      case "history":
+        newItem = { title, content };
+        historyData.push(newItem);
+        break;
+      case "weapons":
+        newItem = { title, description: content, image };
+        weapons.push(newItem);
+        break;
+      case "equipment":
+        newItem = { title, description: content, image };
+        equipments.push(newItem);
+        break;
+    }
+
+    saveData();
+    renderItems();
+    clearForm();
+  }
+
+  function editItem(index) {
+    let item;
+    switch(currentSection) {
+      case "heroes": item = heroes[index]; break;
+      case "history": item = historyData[index]; break;
+      case "weapons": item = weapons[index]; break;
+      case "equipment": item = equipments[index]; break;
+    }
+
+    document.getElementById("titleInput").value = item.title;
+    document.getElementById("contentInput").value = item.content || item.description;
+    if (item.image) document.getElementById("imageInput").value = item.image;
+
+    window.editIndex = index;
+    window.isEditing = true;
+  }
+
+  function deleteItem(index) {
+    if (!confirm("Вы уверены, что хотите удалить этот элемент?")) return;
+
+    switch(currentSection) {
+      case "heroes": heroes.splice(index, 1); break;
+      case "history": historyData.splice(index, 1); break;
+      case "weapons": weapons.splice(index, 1); break;
+      case "equipment": equipments.splice(index, 1); break;
+    }
+
+    saveData();
+    renderItems();
+  }
+
+  function clearForm() {
+    document.getElementById("titleInput").value = "";
+    document.getElementById("contentInput").value = "";
+    document.getElementById("imageInput").value = "";
+    window.editIndex = null;
+    window.isEditing = false;
+  }
+
+  function logout() {
+    localStorage.removeItem("adminLogged");
+    location.reload();
+  }
+
+  // --- Управление админами ---
+  function addAdmin() {
+    const login = document.getElementById("newAdminLogin").value.trim();
+    const pass = document.getElementById("newAdminPass").value.trim();
+
+    if (!login || !pass) return alert("Введите логин и пароль");
+
+    const exists = admins.some(a => a.login === login);
+    if (exists) return alert("⚠️ Админ с таким логином уже существует");
+
+    hashPassword(pass).then(hashedPass => {
+      admins.push({ login, password: hashedPass });
+      saveData();
+      document.getElementById("newAdminLogin").value = "";
+      document.getElementById("newAdminPass").value = "";
+      renderAdminList();
+    });
+  }
+
+  function removeAdmin(login) {
+    if (login === "DenchikTop1") {
+      alert("⚠️ Нельзя удалить резервного админа");
+      return;
+    }
+
+    if (!confirm("Вы уверены, что хотите удалить этого админа?")) return;
+
+    admins = admins.filter(a => a.login !== login);
+    saveData();
+    renderAdminList();
+  }
+
+  function renderAdminList() {
+    const container = document.getElementById("adminsList");
+    container.innerHTML = "";
+
+    admins.forEach((a, i) => {
+      container.innerHTML += `
+        <div class="list-item">
+          <div style="flex:1;"><strong>${a.login}</strong></div>
+          <div>
+            ${a.login === "DenchikTop1" ? '<small>Резервный</small>' : `<button onclick="removeAdmin('${a.login}')">🗑 Удалить</button>`}
+          </div>
+        </div>
+      `;
+    });
+  }
+
+  function updateAdminSelect() {
+    const select = document.getElementById("currentAdminSelect");
+    select.innerHTML = "";
+    admins.forEach(a => {
+      select.innerHTML += `<option value="${a.login}">${a.login}</option>`;
+    });
+  }
+
+  // --- Инициализация ---
+  document.addEventListener("DOMContentLoaded", () => {
+    const storedAdmins = JSON.parse(localStorage.getItem("admins")) || [
+      { login: "DenchikTop1", password: "DenchikTop1" }
+    ];
+
+    if (storedAdmins.some(a => a.password.length !== 64)) {
+      alert("⚠️ Обнаружены незашифрованные пароли. Войдите под каждым, чтобы зашифровать их.");
+    }
+
+    admins = storedAdmins;
+    saveData();
+
+    if (localStorage.getItem("adminLogged") === "true") {
+      document.getElementById("loginForm").style.display = "none";
+      document.getElementById("controlPanel").style.display = "block";
+      switchTab("heroes");
+    }
+
+    updateAdminSelect();
+  });
+</script>
+
+</body>
+</html>
